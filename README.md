@@ -4,12 +4,11 @@ A Claude Code skill that splits an existing codebase into **per-person work
 packages** so a team can build in parallel without blocking each other —
 hackathons, sprint kickoffs, crunch integration.
 
-Companion to [ledger-driven-development-skill](https://github.com/sezaiemrekonuk/ledger-driven-development-skill):
-when initiative ledgers (`.{slug}/` folders from `plan-initiative`) or other
-plan artifacts exist, this skill consumes them and divides their tasks across
-teammates. When nothing exists, it maps the code and generates the tasks itself.
-Either way, each teammate gets an initiative-style execution ledger they can
-work from in a fresh session.
+Works standalone or on top of any planning skill: when plan artifacts exist —
+initiative ledgers, plan docs, task lists — this skill consumes them and
+divides their tasks across teammates. When nothing exists, it maps the code
+and generates the tasks itself. Either way, each teammate gets an
+initiative-style execution ledger they can work from in a fresh session.
 
 ## What it does
 
@@ -67,18 +66,17 @@ thing that must be demoable — then map, stop for your confirmation, and build
 
 ## Works best with planning skills
 
-split-the-build is a divider, not a planner — it shines when a planning skill
-has already produced structured work:
+split-the-build is a divider, not a planner — it shines when any planning
+skill has already produced structured work. It is not tied to a specific one;
+anything enumerable into tasks counts:
 
-- **[ledger-driven-development-skill](https://github.com/sezaiemrekonuk/ledger-driven-development-skill)**
-  (`plan-initiative` / `update-initiative`) — the primary companion. Plan
-  initiatives into `.{slug}/` ledgers first; split-the-build then divides
-  their tasks across teammates by file footprint, adds an `Owner` column, and
-  leaves the ledgers as the single source of truth. Amendments made later with
-  `update-initiative` are picked up by re-running the split.
+- **Initiative ledgers** — `.{slug}/` folders with `STATE.md` + `tasks/`.
+  Tasks are divided by file footprint, an `Owner` column is added, and the
+  ledger stays the single source of truth; later amendments are picked up by
+  re-running the split. One suggestion that produces this shape:
+  [ledger-driven-development-skill](https://github.com/sezaiemrekonuk/ledger-driven-development-skill).
 - **Plan docs** — implementation plans in `docs/plans/*.md` or specs with
-  phase/task headings (e.g. from a writing-plans style skill) are consumed
-  read-only via heading-anchor pointers.
+  phase/task headings, consumed read-only via heading-anchor pointers.
 - **Task lists** — `TODO.md` and checkbox lists in README/CLAUDE.md count too.
 
 No planning skill in play? Still works: it maps the code and generates the
