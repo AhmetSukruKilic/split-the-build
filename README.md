@@ -65,6 +65,25 @@ The skill will ask for team size/names/strengths, time remaining, and the one
 thing that must be demoable — then map, stop for your confirmation, and build
 `.split/`.
 
+## Works best with planning skills
+
+split-the-build is a divider, not a planner — it shines when a planning skill
+has already produced structured work:
+
+- **[ledger-driven-development-skill](https://github.com/sezaiemrekonuk/ledger-driven-development-skill)**
+  (`plan-initiative` / `update-initiative`) — the primary companion. Plan
+  initiatives into `.{slug}/` ledgers first; split-the-build then divides
+  their tasks across teammates by file footprint, adds an `Owner` column, and
+  leaves the ledgers as the single source of truth. Amendments made later with
+  `update-initiative` are picked up by re-running the split.
+- **Plan docs** — implementation plans in `docs/plans/*.md` or specs with
+  phase/task headings (e.g. from a writing-plans style skill) are consumed
+  read-only via heading-anchor pointers.
+- **Task lists** — `TODO.md` and checkbox lists in README/CLAUDE.md count too.
+
+No planning skill in play? Still works: it maps the code and generates the
+task files itself.
+
 ## Principles
 
 - File ownership, not feature ownership — files are what conflict in git.
