@@ -39,9 +39,11 @@ Say so and stop. A fake split costs more than an honest queue.
 ### 1. GRAPH — dependencies and file footprints
 
 From the plan: each task's `Depends on`, plus its **file footprint** — every file it
-will edit or create, from its anchors *and* a grep for what it migrates (call sites
+will edit or create. Start from the task's `## Files touched` section when it has
+one, then confirm with its anchors *and* a grep for what it migrates (call sites
 hide in files the task file never names). Build a task × file matrix. Read the
-files; never guess footprints from titles.
+files; never guess footprints from titles. A `Depends on` that is only about order
+(no code dependency) is not a dependency — ask the user before treating it as one.
 
 ### 2. LANES — cut by files, not by features
 
