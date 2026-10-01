@@ -10,6 +10,10 @@ divides their tasks across teammates. When nothing exists, it maps the code
 and generates the tasks itself. Either way, each teammate gets an
 initiative-style execution ledger they can work from in a fresh session.
 
+The repo also ships **[split-the-build-for-agents](#split-the-build-for-agents)**:
+the same idea for a single Claude Code session that runs a plan's tasks as
+parallel lanes of subagents instead of dividing them across people.
+
 ## What it does
 
 1. **MAP** — inventories the repo (entry points, modules, data models, external
@@ -47,6 +51,7 @@ STATE.md tables.
 ```bash
 git clone https://github.com/{you}/split-the-build.git
 cp -r split-the-build/skills/split-the-build ~/.claude/skills/
+cp -r split-the-build/skills/split-the-build-for-agents ~/.claude/skills/   # optional
 ```
 
 Or per-project: copy (or symlink) into the repo's `.claude/skills/`.
@@ -91,6 +96,32 @@ task files itself.
 - Existing plans are the source of truth — pointers, not copies.
 - Every assumption made from an ambiguous repo is surfaced, never silent.
 
+## split-the-build-for-agents
+
+For when the "team" is a set of subagents one controller session dispatches.
+Serial subagent runs waste hours when tasks only depend on a shared foundation;
+this skill runs them as **lanes**, each in its own git worktree, without dropping
+the implementer + reviewer loop per task.
+
+1. **GRAPH** — dependencies plus each task's real file footprint (anchors + grep).
+2. **LANES** — chains of tasks cut by files; no file edited by two lanes at the
+   same time. Hot files queue behind one lane's merge; tasks split at a file
+   boundary when only part is hot. Stops for your confirmation.
+3. **ISOLATE** — per-lane worktree, installs, ports, database and test database,
+   with a check that each is actually overridable in code.
+4. **CONTRACTS + HOUR ZERO** — frozen cross-lane surfaces and the foundation
+   tasks every lane needs, merged first.
+5. **RUN** — lanes in parallel (cap 3–4), reviews pipelined with the lane's next
+   task, a git-ignored run ledger for compaction and usage-limit recovery.
+6. **MERGE** — each task into the integration branch as soon as its review is
+   clean; controller regenerates baselines/lockfiles and merges forward.
+7. **CLOSE** — whole-branch review, one fix wave, serial close-out.
+
+Uses superpowers' `subagent-driven-development` for the per-task loop when
+installed (overriding only its "no parallel implementers" rule, which exists
+because of a shared checkout). Triggers on "parallelize the ledger for agents",
+"run tasks in parallel with subagents", "split the build for agents".
+
 ## Layout
 
 ```
@@ -99,4 +130,8 @@ skills/split-the-build/
   references/contracts.md  # contract formats per stack + change protocol
   references/briefs.md     # personal-ledger file shapes, pointer rules, re-run protocol
   assets/                  # templates: BRIEF, STATE, EXECUTION_PROMPT, generated task
+skills/split-the-build-for-agents/
+  SKILL.md                 # the skill
+  references/lanes.md      # isolation preflight, per-task loop, merging, recovery
+  assets/                  # templates: run ledger, lane dispatch prompt
 ```
