@@ -26,8 +26,6 @@ Single-instance resources: {{browser extension → serialized / fallback}}
 One line per event, append-only:
 
 - `{{ID}}: dispatched lane {{X}} (BASE {{sha7}})`
-- `{{ID}}: implemented {{sha7}} ({{status}}); review dispatched`
-- `{{ID}}: minor (deferred): {{one-liner}}`
-- `{{ID}}: fix round {{R}}/5 ({{N}} addressed, {{M}} open; {{sha7}}..{{sha7}})`
-- `{{ID}}: complete ({{base7}}..{{head7}}, review clean)`
+- `{{ID}}: implemented {{sha7}} ({{status}})`
+- `{{ID}}: complete ({{base7}}..{{head7}}, verification passed)`
 - `{{ID}}: merged into integration ({{merge7}}); forwarded to lanes {{list}}`

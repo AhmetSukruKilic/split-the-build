@@ -30,6 +30,5 @@ merge. Stop any servers you started.
 
 Write the full report to {{REPORT_FILE}}. Reply only: Status (DONE |
 DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT), commits, one-line test summary,
-concerns, report path. If resumed with review findings: fix, re-run the covering
-tests, append a fix report, commit, reply with the same contract.
+concerns, report path.
 ```

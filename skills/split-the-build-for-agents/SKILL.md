@@ -11,19 +11,17 @@ description: Use when a multi-task plan or initiative ledger is about to be exec
 # Split the Build for Agents
 
 Run a plan's tasks as **parallel lanes of subagents**, each lane in its own git
-worktree, while keeping an implementer + reviewer loop per task. The human
-`split-the-build` divides work across people; this divides it across concurrent
-agents that one controller (you) dispatches, reviews, and merges.
+worktree, one implementer per task. The human `split-the-build` divides work
+across people; this divides it across concurrent agents that one controller (you)
+dispatches and merges.
 
 **Core principle:** parallel agents are safe only when nothing they touch at the
 same time is shared — not files, not the checkout, not ports, not the database.
 Speed comes from removing waits, never from accepting conflicts.
 
-**REQUIRED SUB-SKILL:** the per-task loop (implementer → reviewer → fix rounds →
-re-review) is superpowers:subagent-driven-development, if installed. This skill
-overrides only its "never dispatch implementers in parallel" rule — that rule
-exists because of a shared checkout, which lanes remove. Without that skill, use
-the loop in [references/lanes.md](references/lanes.md#the-per-task-loop).
+The per-task loop (dispatch implementer → check its report and verification →
+merge) is in [references/lanes.md](references/lanes.md#the-per-task-loop).
+Implementers run in parallel only because each lane has its own checkout.
 
 ## When NOT to split
 
@@ -87,19 +85,18 @@ branch **before** any lane starts. A task only some lanes need is the head of a
 lane, not hour zero. Contract
 formats: the `split-the-build` skill's `references/contracts.md`, if installed.
 
-### 5. RUN — lanes in parallel, reviews pipelined
+### 5. RUN — lanes in parallel
 
 - Write the run ledger first ([assets/run-ledger-template.md](assets/run-ledger-template.md))
   at `<integration-worktree>/.split-agents/run-ledger.md`, git-ignored through
-  `.git/info/exclude`; reports and review packages go beside it. After compaction
+  `.git/info/exclude`; reports go beside it. After compaction
   or a usage-limit stop, trust it and `git log`, not memory.
 - Dispatch each ready lane's next task with
   [assets/lane-dispatch-template.md](assets/lane-dispatch-template.md): one task,
   its worktree, its ports/DB, its owned files, the contracts, the report path.
 - **Start a task the moment its dependencies are merged**, not at a wave boundary.
-- **Pipeline reviews:** when a lane's task reports DONE, dispatch its reviewer
-  (read-only on that SHA) *and* the lane's next independent task together. A fix
-  round goes to the same lane after its in-flight task commits.
+- When a lane's task reports DONE, dispatch the lane's next task in the same
+  message if its deps are merged.
 - Lane agents commit and stay on their branch; they never push, never touch the
   integration branch, never edit controller-owned files.
 - **The plan's per-task protocol is split in two.** If its tasks say "update
@@ -109,17 +106,16 @@ formats: the `split-the-build` skill's `references/contracts.md`, if installed.
 
 ### 6. MERGE — continuously, in dependency order
 
-Merge a lane task into the integration branch as soon as its review is clean —
-never batch everything for the end. After each merge: regenerate controller-owned
+Merge a lane task into the integration branch as soon as it reports DONE with its
+verification passing — never batch everything for the end. After each merge: regenerate controller-owned
 files, run the fast suite on integration, then merge integration forward into any
 running lane that consumes what just landed. Protocol:
 [references/lanes.md](references/lanes.md#merging).
 
-### 7. CLOSE — one final review, serial close-out
+### 7. CLOSE — serial close-out
 
-Once every lane is merged: the whole-branch review (most capable model) on the
-integration branch, one fix wave, then close-out tasks (cross-browser e2e,
-archive, PR) serially in the integration worktree. Remove lane worktrees, drop lane
+Once every lane is merged: close-out tasks (cross-browser e2e, archive, PR)
+serially in the integration worktree. Remove lane worktrees, drop lane
 databases, stop lane servers. Keep the branches unless told otherwise.
 
 ## Red flags — stop
@@ -128,9 +124,8 @@ databases, stop lane servers. Keep the branches unless told otherwise.
 |---------|---------|
 | "Two agents in one checkout is fine, different files" | Shared index, build caches, installs, ports. One lane = one worktree. |
 | "Small overlap, I'll resolve the conflict" | Conflicts in parallel lanes surface late and get resolved blind. Serialize or contract. |
-| "Skip reviews, we're parallel now" | Speed comes from overlap, not from dropping gates. |
 | "Let each lane update STATE.md" | Controller-owned. Lanes report; you write. |
-| "Merge all lanes at the end" | Big-bang merge. Merge each task when its review is clean. |
+| "Merge all lanes at the end" | Big-bang merge. Merge each task when it reports DONE. |
 | "Ports/DB probably configurable" | Check the code. Hardcoded = hour-zero task. |
 | "8 lanes = 8× faster" | Usage limits and CPU. Cap 3–4. |
 
@@ -149,4 +144,4 @@ with A. Their hot-file migrations are split off and queue behind A's W04 merge,
 then run B → C. `ui/index.ts` and `ui.css` get one pre-cut section per lane at
 hour zero. `baseline.json` and the ledger's STATE.md are controller-owned.
 
-Serial run: ~5 h. Lanes + pipelined reviews: ~2.5–3 h, same agents, same reviews.
+Serial run: ~5 h. Lanes: ~2.5–3 h, same agents.

@@ -30,21 +30,19 @@ Preflight, once:
 
 ## The per-task loop
 
-Same as superpowers:subagent-driven-development, per lane:
+Per lane:
 
 1. Record the lane's BASE SHA. Dispatch the implementer (lane-dispatch template).
-2. On DONE: build the review package from BASE..HEAD of the lane branch; dispatch a
-   reviewer (read-only, spec + quality, the plan's global constraints verbatim).
-   In the same message, dispatch the lane's next task if its deps are merged.
-3. Clean review → mark the task ready to merge. Critical/Important findings →
-   fix round: resume the same implementer after its in-flight task commits; scoped
-   re-review of the fix diff only. Max 5 rounds, then adjudicate or report BLOCKED.
-4. Minor findings → run ledger as deferred minors; the final review triages them.
+2. On DONE: check the report — commits exist on the lane branch, verification ran
+   and passed, no edits outside owned files (`git diff --stat BASE..HEAD`). Then
+   mark the task ready to merge. In the same message, dispatch the lane's next
+   task if its deps are merged.
+3. DONE_WITH_CONCERNS / BLOCKED / NEEDS_CONTEXT → answer or fix the brief and
+   resume the same implementer; if it can't be unblocked, park the lane.
 
-Pick models per role from the tiers your harness offers (e.g. haiku / sonnet /
-opus): cheapest tier that can do it for transcription-style tasks, mid tier as
-the floor for reviewers and prose-spec implementers, most capable for the final
-whole-branch review and for tricky components. Name the model on every dispatch;
+Pick models from the tiers your harness offers (e.g. haiku / sonnet / opus):
+cheapest tier that can do it for transcription-style tasks, mid tier as the floor
+for prose-spec implementers, most capable for tricky components. Name the model on every dispatch;
 an omitted model inherits the controller's, usually the most expensive.
 
 ## Merging

@@ -100,8 +100,8 @@ task files itself.
 
 For when the "team" is a set of subagents one controller session dispatches.
 Serial subagent runs waste hours when tasks only depend on a shared foundation;
-this skill runs them as **lanes**, each in its own git worktree, without dropping
-the implementer + reviewer loop per task.
+this skill runs them as **lanes**, each in its own git worktree, one implementer
+per task.
 
 1. **GRAPH** — dependencies plus each task's real file footprint (anchors + grep).
 2. **LANES** — chains of tasks cut by files; no file edited by two lanes at the
@@ -111,15 +111,15 @@ the implementer + reviewer loop per task.
    with a check that each is actually overridable in code.
 4. **CONTRACTS + HOUR ZERO** — frozen cross-lane surfaces and the foundation
    tasks every lane needs, merged first.
-5. **RUN** — lanes in parallel (cap 3–4), reviews pipelined with the lane's next
-   task, a git-ignored run ledger for compaction and usage-limit recovery.
-6. **MERGE** — each task into the integration branch as soon as its review is
-   clean; controller regenerates baselines/lockfiles and merges forward.
-7. **CLOSE** — whole-branch review, one fix wave, serial close-out.
+5. **RUN** — lanes in parallel (cap 3–4), each lane's next task dispatched as
+   soon as its deps merge, a git-ignored run ledger for compaction and
+   usage-limit recovery.
+6. **MERGE** — each task into the integration branch as soon as it reports DONE
+   with verification passing; controller regenerates baselines/lockfiles and
+   merges forward.
+7. **CLOSE** — serial close-out.
 
-Uses superpowers' `subagent-driven-development` for the per-task loop when
-installed (overriding only its "no parallel implementers" rule, which exists
-because of a shared checkout). Triggers on "parallelize the ledger for agents",
+Triggers on "parallelize the ledger for agents",
 "run tasks in parallel with subagents", "split the build for agents".
 
 ## Layout
