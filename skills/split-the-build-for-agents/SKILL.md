@@ -88,9 +88,16 @@ formats: the `split-the-build` skill's `references/contracts.md`, if installed.
 ### 5. RUN — lanes in parallel
 
 - Write the run ledger first ([assets/run-ledger-template.md](assets/run-ledger-template.md))
-  at `<integration-worktree>/.split-agents/run-ledger.md`, git-ignored through
-  `.git/info/exclude`; reports go beside it. After compaction
-  or a usage-limit stop, trust it and `git log`, not memory.
+  **inside the ledger that owns the plan**, in the integration worktree:
+  `<ledger-dir>/split-run/run-ledger.md` (e.g. `.agents/ledgers/benchmark/split-run/`,
+  `.{slug}/split-run/`); lane briefs and reports go beside it. It is **committed** on
+  the integration branch at every merge, so a fresh session — after compaction, a
+  usage-limit stop, or on another day — finds it with the plan, not in a git-ignored
+  scratch dir that a new worktree or `git clean` loses. Follow the repo's folder rules
+  (a `CLAUDE.md` per folder, the ledger's file table) when creating it. No plan ledger
+  folder? Put it beside the plan file. Never write corpus or secret content into it.
+  On resume: read it and `git log`, not memory. A second split of the same ledger
+  appends a dated section; it never starts a parallel file.
 - Dispatch each ready lane's next task with
   [assets/lane-dispatch-template.md](assets/lane-dispatch-template.md): one task,
   its worktree, its ports/DB, its owned files, the contracts, the report path.
@@ -125,6 +132,7 @@ databases, stop lane servers. Keep the branches unless told otherwise.
 | "Two agents in one checkout is fine, different files" | Shared index, build caches, installs, ports. One lane = one worktree. |
 | "Small overlap, I'll resolve the conflict" | Conflicts in parallel lanes surface late and get resolved blind. Serialize or contract. |
 | "Let each lane update STATE.md" | Controller-owned. Lanes report; you write. |
+| "Run ledger in a scratch dir is fine" | Next session can't see it. It lives in the owning ledger, committed. |
 | "Merge all lanes at the end" | Big-bang merge. Merge each task when it reports DONE. |
 | "Ports/DB probably configurable" | Check the code. Hardcoded = hour-zero task. |
 | "8 lanes = 8× faster" | Usage limits and CPU. Cap 3–4. |

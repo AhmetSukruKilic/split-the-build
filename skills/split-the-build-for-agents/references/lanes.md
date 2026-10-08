@@ -58,7 +58,9 @@ Only the controller merges, into the integration worktree:
    repo's own generator; never hand-merge them. No generator? Take the lower
    value per key for shrink-only files, then run the check that reads them — it
    must pass with the merged result.
-4. Update the plan's STATE/ledger rows yourself.
+4. Update the plan's STATE/ledger rows and the run ledger (`<ledger-dir>/split-run/`)
+   yourself, and commit them on integration with the merge — a fresh session reads
+   both from the branch.
 5. Run the fast suite (typecheck + unit) on integration. Red → the last merged
    lane owns the fix.
 6. **Merge forward:** for each running lane that consumes what just landed,
@@ -69,7 +71,8 @@ Only the controller merges, into the integration worktree:
 
 ## Recovery
 
-- **Compaction:** read the run ledger and `git log` on each lane branch. A task
+- **Compaction or a new session:** read the run ledger at `<ledger-dir>/split-run/run-ledger.md`
+  in the integration worktree and `git log` on each lane branch. A task
   with a `complete` line is done; never re-dispatch it.
 - **Usage limit / API error mid-task:** the agent's edits are uncommitted in its
   worktree. Resume the same agent with "you were cut off; `git diff` shows where

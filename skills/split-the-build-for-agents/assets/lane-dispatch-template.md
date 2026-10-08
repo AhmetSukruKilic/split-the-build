@@ -28,7 +28,8 @@ verification exactly as written, commit as `{{ID}}: <title>`
 push and any other end-of-task protocol steps — the controller does them at
 merge. Stop any servers you started.
 
-Write the full report to {{REPORT_FILE}}. Reply only: Status (DONE |
+Write the full report to {{REPORT_FILE}} (`<ledger-dir>/split-run/{{ID}}-report.md` in
+your worktree; do not commit it — the controller copies it into integration at merge). Reply only: Status (DONE |
 DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT), commits, one-line test summary,
 concerns, report path.
 ```

@@ -1,8 +1,10 @@
 # Run ledger — plan: {{PLAN_PATH}}
 
 Integration: `{{INTEGRATION_BRANCH}}` in `{{INTEGRATION_WORKTREE}}` · started {{DATE}}
-Keep this file git-ignored (e.g. `.git/info/exclude`). It is the controller's
-recovery map: after compaction or a usage-limit stop, trust it and `git log`.
+Lives at `<ledger-dir>/split-run/run-ledger.md`, inside the ledger that owns the plan,
+committed on the integration branch at every merge. It is the controller's recovery map:
+after compaction, a usage-limit stop or a new session, trust it and `git log`.
+Controller-owned: lanes never write it.
 
 ## Lanes
 
