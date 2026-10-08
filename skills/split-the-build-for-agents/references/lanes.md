@@ -40,10 +40,8 @@ Per lane:
 3. DONE_WITH_CONCERNS / BLOCKED / NEEDS_CONTEXT → answer or fix the brief and
    resume the same implementer; if it can't be unblocked, park the lane.
 
-Pick models from the tiers your harness offers (e.g. haiku / sonnet / opus):
-cheapest tier that can do it for transcription-style tasks, mid tier as the floor
-for prose-spec implementers, most capable for tricky components. Name the model on every dispatch;
-an omitted model inherits the controller's, usually the most expensive.
+Never pick a model per task. Omit the model on every dispatch so each implementer
+inherits the controller's configured model.
 
 ## Merging
 
